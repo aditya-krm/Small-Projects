@@ -4,9 +4,10 @@ import LinkComponent from "./LinkComponent";
 const Sidebar = forwardRef(({ isOpen, toggleSidebar }, ref) => {
   const links = [
     { to: "/", text: "Home" },
-    { to: "/chat-app", text: "Chat App" },
+    { to: "/chat", text: "Chat App" },
     { to: "/weather-app", text: "Weather App" },
     { to: "/currency-convertor", text: "Currency Convertor" },
+    { to: "/bgchanger", text: "BgChanger" },
   ];
 
   return (

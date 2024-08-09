@@ -10,6 +10,7 @@ import {
 import MainLayout from "./layout/MainLayout.jsx";
 import Home from "./Pages/Home";
 import { ChatBox } from "./components";
+import BgChanger from "./Pages/BgChanger";
 const ChatApp = lazy(() => delayForDemo(import("./Pages/ChatApp")));
 const WeatherApp = lazy(() => delayForDemo(import("./Pages/WeatherApp")));
 const CurrencyConvertor = lazy(() =>
@@ -31,7 +32,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<MainLayout />}>
       <Route path="" element={<Home />} />
       <Route
-        path="chat-app"
+        path="chat"
         element={
           <Suspense fallback={<Loading />}>
             <ChatApp />
@@ -52,6 +53,14 @@ const router = createBrowserRouter(
         element={
           <Suspense fallback={<Loading />}>
             <CurrencyConvertor />
+          </Suspense>
+        }
+      />
+      <Route
+        path="bgchanger"
+        element={
+          <Suspense fallback={<Loading />}>
+            <BgChanger />
           </Suspense>
         }
       />

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 
 function ChatApp() {
@@ -7,27 +7,36 @@ function ChatApp() {
   const [name, setName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const urlRoomId = searchParams.get("roomId");
+    if (urlRoomId) {
+      setRoomId(urlRoomId);
+    }
+  }, [location.search]);
 
   const handleCreateRoom = () => {
+    if (!name.trim()) {
+      setErrorMessage("Name is required to create a room.");
+      return;
+    }
     const newRoomId = Math.random().toString(36).substring(2, 10);
-    navigate(
-      `/chat/${newRoomId}?name=${
-        name || `User${Math.floor(Math.random() * 1000)}`
-      }`
-    );
+    navigate(`/chat/${newRoomId}?name=${encodeURIComponent(name)}`);
   };
 
   const handleJoinRoom = () => {
+    if (!name.trim()) {
+      setErrorMessage("Name is required to join a room.");
+      return;
+    }
     if (roomId.trim()) {
       setErrorMessage("");
-      navigate(
-        `/chat/${roomId.trim()}?name=${
-          name || `User${Math.floor(Math.random() * 1000)}`
-        }`
-      );
+      navigate(`/chat/${roomId.trim()}?name=${encodeURIComponent(name)}`);
     } else {
       setErrorMessage(
-        "Room ID cannot be empty while joining to a room. Please enter a Room ID."
+        "Room ID cannot be empty while joining a room. Please enter a Room ID."
       );
     }
   };
@@ -39,9 +48,9 @@ function ChatApp() {
         <div className="input">
           <label
             htmlFor="name"
-            className="block text-md  font-medium text-gray-500"
+            className="block text-md font-medium text-gray-500"
           >
-            Enter your name or leave for generate random
+            Enter your name
           </label>
           <Input
             type="text"
@@ -64,6 +73,7 @@ function ChatApp() {
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
             placeholder="i50s2d7n"
+            disabled={Boolean(roomId)}
           />
         </div>
         {errorMessage && (

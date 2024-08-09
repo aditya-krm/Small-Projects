@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
@@ -17,8 +17,15 @@ function ChatBox() {
   const [input, setInput] = useState("");
   const socketRef = useRef();
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
+  const shareableLink = `${window.location.origin}/chat?roomId=${roomId}`;
 
   useEffect(() => {
+    if (!name) {
+      navigate(`/chat`);
+      return;
+    }
+
     const apiEndpoint = import.meta.env.VITE_CHAT_APP_BACKEND_URL;
 
     socketRef.current = io(apiEndpoint);
@@ -47,7 +54,7 @@ function ChatBox() {
       socketRef.current.off("user left", handleUserLeft);
       socketRef.current.disconnect();
     };
-  }, [roomId, name]);
+  }, [roomId, name, navigate]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -73,10 +80,23 @@ function ChatBox() {
     <>
       <Toaster position="top-right" richColors expand={true} />
       <div className="flex flex-col items-center justify-center h-full p-4 bg-gray-900">
-        <div className="w-full max-w-lg flex flex-col justify-between p-4 rounded-md shadow-md bg-gray-800">
+        <div className="w-full max-w-lg h-full flex flex-col justify-between p-4 rounded-md shadow-md bg-gray-800">
+          <div className="mb-4">
+            <label className="block text-gray-400 mb-2">Shareable Link:</label>
+            <Input
+              value={shareableLink}
+              readOnly
+              className="w-full bg-gray-700 text-gray-400 p-2 rounded-md"
+              onClick={(e) => {
+                e.target.select();
+                navigator.clipboard.writeText(shareableLink);
+                toast.success("Link copied to clipboard!");
+              }}
+            />
+          </div>
           <div
             id="messages"
-            className="flex flex-col h-[500px] p-2 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-800"
+            className="flex flex-col h-[400px] sm:h-[500px] p-2 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-800"
           >
             {messages.map((msg, index) => (
               <p

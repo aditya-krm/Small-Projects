@@ -102,7 +102,11 @@ function WeatherApp() {
         </CardContent>
         <CardFooter className="text-center mt-4 flex justify-between">
           <h4 className="text-xs mt-2">5 min weather App</h4>
-          <Button variant="secondary" onClick={handleToggleJson}>
+          <Button
+            variant="secondary"
+            onClick={handleToggleJson}
+            className="hidden sm:flex"
+          >
             <IoInformationCircle className="mr-2" />
             {showJson ? "Hide JSON" : "Show JSON"}
           </Button>
